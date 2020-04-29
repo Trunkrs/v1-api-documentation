@@ -1,0 +1,774 @@
+openapi: 3.0.0
+info:
+  title: Trunkrs Client API
+  version: '1.0'
+  contact:
+    name: Trunkrs BV
+    url: 'https://trunkrs.nl'
+    email: tech.support@trunkrs.nl
+  description: API allowing Trunkrs Clients to create and cancel shipments as well as get information on the status of shipments.
+  termsOfService: 'https://static1.squarespace.com/static/5cb44d76523958d6ab569d39/t/5cb72fed4785d35a3af1d89e/1555509229937/Algemene-voorwaarden-van-de-Fenex.pdf'
+servers:
+  - url: 'https://staging-api.trunkrs.nl/api/v1'
+    description: staging
+  - url: 'https://api.trunkrs.nl/api/v1'
+    description: production
+paths:
+  /shipments:
+    get:
+      summary: List shipments
+      tags:
+        - shipments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shipment'
+              examples:
+                shipments:
+                  value:
+                    - label: 'https://api.trunkrs.nl/api/v1/label/042995df224beb4ba46319b295242f90/400018820'
+                      shipmentId: 16206
+                      trunkrsNr: 400018820
+                      sender:
+                        name: Hidde Stokvis
+                        email: hidde@trunkrs.nl
+                        phoneNumber: '+31639751448'
+                        address: Sportlaan 3A
+                        postCode: 4131NN
+                        city: Vianen
+                        country: NL
+                        remarks: null
+                      recipient:
+                        name: John Doe
+                        email: noemail@nodomain.no
+                        phoneNumber: '+3123456789'
+                        address: Liesbosch 90
+                        postCode: 3439LC
+                        city: Nieuwegein
+                        country: NL
+                        remarks: null
+                      timeSlot:
+                        senderId: 2
+                        dataWindow: '2020-04-28T20:00:00.000Z'
+                        collectionWindow:
+                          from: '2020-04-28T20:00:00.000Z'
+                          to: '2020-04-28T16:00:00.000Z'
+                        deliveryWindow:
+                          from: '2020-04-28T16:00:00.000Z'
+                          to: '2020-04-28T21:00:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+      operationId: get-shipment
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: page
+          description: |
+            Page number (50 shipments per page)
+      description: List all shipments for sender (50 shipments per page)
+    parameters: []
+    post:
+      summary: Create shipment
+      operationId: post-shipments
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Shipment'
+                  - type: array
+                    description: Array if more then 1 colli
+                    items:
+                      $ref: '#/components/schemas/Shipment'
+              examples:
+                single colli:
+                  value:
+                    label: 'https://api.trunkrs.nl/api/v1/label/042995df224beb4ba46319b295242f90/400018820'
+                    shipmentId: 16206
+                    trunkrsNr: 400018820
+                    sender:
+                      name: Hidde Stokvis
+                      email: hidde@trunkrs.nl
+                      phoneNumber: '+31639751448'
+                      address: Sportlaan 3A
+                      postCode: 4131NN
+                      city: Vianen
+                      country: NL
+                      remarks: null
+                    recipient:
+                      name: John Doe
+                      email: noemail@nodomain.no
+                      phoneNumber: '+3123456789'
+                      address: Liesbosch 90
+                      postCode: 3439LC
+                      city: Nieuwegein
+                      country: NL
+                      remarks: null
+                    timeSlot:
+                      senderId: 2
+                      dataWindow: '2020-04-28T20:00:00.000Z'
+                      collectionWindow:
+                        from: '2020-04-28T20:00:00.000Z'
+                        to: '2020-04-28T16:00:00.000Z'
+                      deliveryWindow:
+                        from: '2020-04-28T16:00:00.000Z'
+                        to: '2020-04-28T21:00:00.000Z'
+                multi colli:
+                  value:
+                    - label: 'https://api.trunkrs.nl/api/v1/label/042995df224beb4ba46319b295242f90/400018820'
+                      shipmentId: 16206
+                      trunkrsNr: 400018820
+                      sender:
+                        name: Hidde Stokvis
+                        email: hidde@trunkrs.nl
+                        phoneNumber: '+31639751448'
+                        address: Sportlaan 3A
+                        postCode: 4131NN
+                        city: Vianen
+                        country: NL
+                        remarks: null
+                      recipient:
+                        name: John Doe
+                        email: noemail@nodomain.no
+                        phoneNumber: '+3123456789'
+                        address: Liesbosch 90
+                        postCode: 3439LC
+                        city: Nieuwegein
+                        country: NL
+                        remarks: null
+                      timeSlot:
+                        senderId: 2
+                        dataWindow: '2020-04-28T20:00:00.000Z'
+                        collectionWindow:
+                          from: '2020-04-28T20:00:00.000Z'
+                          to: '2020-04-28T16:00:00.000Z'
+                        deliveryWindow:
+                          from: '2020-04-28T16:00:00.000Z'
+                          to: '2020-04-28T21:00:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      description: Create a new shipment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderReference:
+                  type: string
+                  description: Order reference or barcode (must be unique)
+                pickupName:
+                  type: string
+                  description: |
+                    (Company) name of pick-up location
+                pickupAddress:
+                  type: string
+                pickupAddress2:
+                  type: string
+                pickupCity:
+                  type: string
+                pickupPostCode:
+                  type: string
+                pickupCountry:
+                  type: string
+                  enum:
+                    - NL
+                pickupContact:
+                  type: string
+                  description: Name of contact at pick-up location
+                pickupEmail:
+                  type: string
+                pickupPhone:
+                  type: string
+                pickupRemarks:
+                  type: string
+                deliveryName:
+                  type: string
+                  description: Name or company of recipient
+                deliveryAddress:
+                  type: string
+                deliveryAddress2:
+                  type: string
+                deliveryPostCode:
+                  type: string
+                deliveryCity:
+                  type: string
+                deliveryCountry:
+                  type: string
+                  enum:
+                    - NL
+                deliveryContact:
+                  type: string
+                  description: Name of recipient
+                deliveryEmail:
+                  type: string
+                deliveryPhone:
+                  type: string
+                deliveryRemarks:
+                  type: string
+                timeSlotId:
+                  type: number
+                  description: 'ID of requested time slot (must be open!)'
+                totalQuantity:
+                  type: number
+                  description: Number of colli
+              required:
+                - orderReference
+                - pickupName
+                - pickupAddress
+                - pickupCity
+                - pickupPostCode
+                - pickupCountry
+                - pickupContact
+                - pickupEmail
+                - pickupPhone
+                - deliveryName
+                - deliveryAddress
+                - deliveryPostCode
+                - deliveryCity
+                - deliveryCountry
+                - deliveryContact
+                - deliveryEmail
+            examples:
+              Example shipment:
+                value:
+                  orderReference: trunkrs-test-202004281245
+                  pickupName: Trunkrs BV
+                  pickupAddress: Liesbosch 90
+                  pickupPostCode: 3439LC
+                  pickupCity: Nieuwegein
+                  pickupCountry: NL
+                  pickupContact: Tech Support
+                  pickupEmail: tech.support@trunkrs.nl
+                  pickupPhone: 085 060 1410
+                  pickupRemarks: Get a badge at the gate
+                  deliveryName: Trunkrs BV
+                  deliveryAddress: Sportlaan 3a
+                  deliveryPostCode: 4131NN
+                  deliveryCity: Vianen
+                  deliveryCountry: NL
+                  deliveryContact: John Doe
+                  deliveryEmail: johndoe@trunkrs.nl
+                  deliveryPhone: '+31612345678'
+                  deliveryRemarks: "Drive into the sportlaan, it's at the back"
+      tags:
+        - shipments
+  '/shipments/{shipmentId}':
+    parameters:
+      - schema:
+          type: number
+        name: shipmentId
+        in: path
+        required: true
+        description: shipment id
+    get:
+      summary: Get specific shipment
+      tags:
+        - shipments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+              examples:
+                shipment:
+                  value:
+                    label: 'https://api.trunkrs.nl/api/v1/label/042995df224beb4ba46319b295242f90/400018820'
+                    shipmentId: 16206
+                    trunkrsNr: 400018820
+                    sender:
+                      name: Hidde Stokvis
+                      email: hidde@trunkrs.nl
+                      phoneNumber: '+31639751448'
+                      address: Sportlaan 3A
+                      postCode: 4131NN
+                      city: Vianen
+                      country: NL
+                      remarks: null
+                    recipient:
+                      name: John Doe
+                      email: noemail@nodomain.no
+                      phoneNumber: '+3123456789'
+                      address: Liesbosch 90
+                      postCode: 3439LC
+                      city: Nieuwegein
+                      country: NL
+                      remarks: null
+                    timeSlot:
+                      senderId: 2
+                      dataWindow: '2020-04-28T20:00:00.000Z'
+                      collectionWindow:
+                        from: '2020-04-28T20:00:00.000Z'
+                        to: '2020-04-28T16:00:00.000Z'
+                      deliveryWindow:
+                        from: '2020-04-28T16:00:00.000Z'
+                        to: '2020-04-28T21:00:00.000Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+        '404':
+          description: Not Found
+      operationId: get-shipments-id
+      description: Get a single shipment
+      requestBody: {}
+    delete:
+      summary: Cancel shipment
+      operationId: delete-shipments-id
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      description: Cancel a shipment
+      tags:
+        - shipments
+  '/state/{shipmentId}':
+    parameters:
+      - schema:
+          type: number
+        name: shipmentId
+        in: path
+        required: true
+    get:
+      summary: Get status of shipment
+      tags:
+        - shipments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+      operationId: get-state-id
+      description: Gets the current state of a shipment
+  /timeslots:
+    get:
+      summary: List time slots
+      tags:
+        - time slots
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeSlot'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+      operationId: get-timeslots
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - NL
+          in: query
+          name: country
+        - schema:
+            type: string
+          in: query
+          name: postalCode
+      requestBody: {}
+      description: List all available time slots
+    parameters: []
+  /webhooks:
+    get:
+      summary: List webhooks
+      tags:
+        - webhooks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+      operationId: get-webhooks
+      description: List all registered webhooks
+    post:
+      summary: Create webhook
+      operationId: post-webhooks
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+      description: Create a new webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: Endpoint the webhook will be fired to
+                key:
+                  type: string
+                  default: x-api-token
+                  description: optional security header name
+                token:
+                  type: string
+                  description: Header token value
+                uponShipmentCreation:
+                  type: boolean
+                  deprecated: true
+                uponLabelReady:
+                  type: boolean
+                  deprecated: true
+                uponRouteUpdate:
+                  type: boolean
+                  deprecated: true
+                uponStatusUpdate:
+                  type: boolean
+                  description: Receive updates of shipment status
+                uponShipmentCancellation:
+                  type: boolean
+                  deprecated: true
+                uponReturnCreation:
+                  type: boolean
+                  deprecated: true
+                uponReturnStatusUpdate:
+                  type: boolean
+                  deprecated: true
+              required:
+                - url
+                - uponStatusUpdate
+      tags:
+        - webhooks
+  '/webhooks/{webhookId}':
+    parameters:
+      - schema:
+          type: number
+        name: webhookId
+        in: path
+        required: true
+        description: Webhook ID
+    get:
+      summary: Get specific webhook
+      tags:
+        - webhooks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+      operationId: get-webhooks-webhookId
+      description: Retrieve a single specific webhook
+    delete:
+      summary: Delete webhook
+      operationId: delete-webhooks-webhookId
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationError'
+      description: Delete a specific webhook
+      tags:
+        - webhooks
+components:
+  schemas:
+    Shipment:
+      title: Shipment
+      type: object
+      properties:
+        shipmentId:
+          type: string
+        trunkrsNr:
+          type: string
+        label:
+          type: string
+        sender:
+          $ref: '#/components/schemas/Stop'
+        recipient:
+          $ref: '#/components/schemas/Stop'
+        timeslot:
+          $ref: '#/components/schemas/TimeSlot'
+      description: Schema of a shipment
+      x-tags:
+        - shipments
+    Stop:
+      title: 'Model: Stop'
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        address:
+          type: string
+        postCode:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+          enum:
+            - NL
+        remarks:
+          type: string
+      required:
+        - name
+        - email
+        - address
+        - postCode
+        - city
+        - country
+      description: ''
+    TimeSlot:
+      title: Time Slot
+      type: object
+      properties:
+        id:
+          type: string
+        senderId:
+          type: string
+        dataWindow:
+          type: string
+          format: date-time
+        collectionWindow:
+          $ref: '#/components/schemas/TimeSlotWindow'
+        deliveryWindow:
+          $ref: '#/components/schemas/TimeSlotWindow'
+      description: Schema of a time slot
+      x-tags:
+        - time slots
+    TimeSlotWindow:
+      title: 'Model: TimeSlotWindow'
+      type: object
+      properties:
+        from:
+          type: string
+          format: date-time
+        to:
+          type: string
+          format: date-time
+    AuthorizationError:
+      title: 'Model: AuthorizationError'
+      type: object
+      properties:
+        message:
+          type: string
+    State:
+      title: Status
+      type: object
+      properties:
+        shipmentId:
+          type: number
+        orderReference:
+          type: string
+        tourId:
+          type: number
+        currentOwner:
+          type: object
+          required:
+            - type
+            - name
+            - address
+            - postCode
+            - city
+            - country
+          properties:
+            type:
+              type: string
+            name:
+              type: string
+            address:
+              type: string
+            postCode:
+              type: string
+            city:
+              type: string
+            country:
+              type: string
+        stateObj:
+          type: object
+          required:
+            - id
+            - label
+            - name
+            - status
+          properties:
+            id:
+              type: number
+            label:
+              type: string
+            name:
+              type: string
+            status:
+              type: string
+            reasonCode:
+              type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - shipmentId
+        - orderReference
+        - currentOwner
+        - stateObj
+        - timestamp
+      x-tags:
+        - shipments
+      description: schema of a shipment status
+    Webhook:
+      title: Webhook
+      type: object
+      properties:
+        id:
+          type: number
+        userId:
+          type: number
+        key:
+          type: string
+        token:
+          type: string
+        uponShipmentCreation:
+          deprecated: true
+          type: boolean
+        uponLabelReady:
+          deprecated: true
+          type: boolean
+        uponRouteUpdate:
+          deprecated: true
+          type: boolean
+        uponStatusUpdate:
+          type: boolean
+        uponShipmentCancellation:
+          deprecated: true
+          type: boolean
+        created_at:
+          format: date-time
+          type: boolean
+        updated_at:
+          format: date-time
+          type: boolean
+      required:
+        - id
+        - userId
+        - key
+        - token
+        - uponShipmentCreation
+        - uponLabelReady
+        - uponRouteUpdate
+        - uponStatusUpdate
+        - uponShipmentCancellation
+        - created_at
+        - updated_at
+      description: Schema of a webhook
+      x-tags:
+        - webhooks
+    HTTPError:
+      title: HTTPError
+      type: object
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        status:
+          type: number
+        statusCode:
+          type: number
+      required:
+        - message
+        - name
+        - status
+        - statusCode
+  securitySchemes:
+    ClientId:
+      name: x-api-clientid
+      type: apiKey
+      in: header
+    ClientSecret:
+      type: apiKey
+      in: header
+      name: x-api-clientsecret
+security:
+  - ClientId: []
+  - ClientSecret: []
