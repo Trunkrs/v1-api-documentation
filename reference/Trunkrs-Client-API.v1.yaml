@@ -294,39 +294,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Shipment'
-              examples:
-                shipment:
-                  value:
-                    label: 'https://api.trunkrs.nl/api/v1/label/042995df224beb4ba46319b295242f90/400018820'
-                    shipmentId: 16206
-                    trunkrsNr: 400018820
-                    sender:
-                      name: Hidde Stokvis
-                      email: hidde@trunkrs.nl
-                      phoneNumber: '+31639751448'
-                      address: Sportlaan 3A
-                      postCode: 4131NN
-                      city: Vianen
-                      country: NL
-                      remarks: null
-                    recipient:
-                      name: John Doe
-                      email: noemail@nodomain.no
-                      phoneNumber: '+3123456789'
-                      address: Liesbosch 90
-                      postCode: 3439LC
-                      city: Nieuwegein
-                      country: NL
-                      remarks: null
-                    timeSlot:
-                      senderId: 2
-                      dataWindow: '2020-04-28T20:00:00.000Z'
-                      collectionWindow:
-                        from: '2020-04-28T20:00:00.000Z'
-                        to: '2020-04-28T16:00:00.000Z'
-                      deliveryWindow:
-                        from: '2020-04-28T16:00:00.000Z'
-                        to: '2020-04-28T21:00:00.000Z'
         '401':
           description: Unauthorized
           content:
@@ -554,6 +521,9 @@ components:
     Shipment:
       title: Shipment
       type: object
+      description: Schema of a shipment
+      x-tags:
+        - shipments
       properties:
         shipmentId:
           type: string
@@ -567,9 +537,13 @@ components:
           $ref: '#/components/schemas/Stop'
         timeslot:
           $ref: '#/components/schemas/TimeSlot'
-      description: Schema of a shipment
-      x-tags:
-        - shipments
+      required:
+        - shipmentId
+        - trunkrsNr
+        - label
+        - sender
+        - recipient
+        - timeslot
     Stop:
       title: 'Model: Stop'
       type: object
