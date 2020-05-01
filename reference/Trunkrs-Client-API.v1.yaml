@@ -673,6 +673,9 @@ components:
     Webhook:
       title: Webhook
       type: object
+      description: Schema of a webhook
+      x-tags:
+        - webhooks
       properties:
         id:
           type: number
@@ -698,10 +701,10 @@ components:
           type: boolean
         created_at:
           format: date-time
-          type: boolean
+          type: string
         updated_at:
           format: date-time
-          type: boolean
+          type: string
       required:
         - id
         - userId
@@ -714,9 +717,6 @@ components:
         - uponShipmentCancellation
         - created_at
         - updated_at
-      description: Schema of a webhook
-      x-tags:
-        - webhooks
     HTTPError:
       title: HTTPError
       type: object
