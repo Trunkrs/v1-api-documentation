@@ -526,7 +526,7 @@ components:
         - shipments
       properties:
         shipmentId:
-          type: string
+          type: number
         trunkrsNr:
           type: string
         label:
