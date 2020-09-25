@@ -230,7 +230,7 @@ paths:
                   type: string
                 timeSlotId:
                   type: number
-                  description: 'ID of requested time slot (must be open!)'
+                  description: ID of requested time slot (must be open!)
                 totalQuantity:
                   type: number
                   description: Number of colli
@@ -272,7 +272,7 @@ paths:
                   deliveryContact: John Doe
                   deliveryEmail: johndoe@trunkrs.nl
                   deliveryPhone: '+31612345678'
-                  deliveryRemarks: "Drive into the sportlaan, it's at the back"
+                  deliveryRemarks: 'Drive into the sportlaan, it''s at the back'
       tags:
         - shipments
   '/shipments/{shipmentId}':
@@ -734,6 +734,74 @@ components:
         - name
         - status
         - statusCode
+    Webook-payload:
+      title: Webook-payload
+      type: object
+      description: |-
+        The contents of a webhook.
+
+        Possible state values can be found here: https://trunkrs-website-hosted-files.s3.eu-central-1.amazonaws.com/states.xlsx
+
+        Possible reason code values can be found here: https://trunkrs-website-hosted-files.s3.eu-central-1.amazonaws.com/reason+codes.xlsx
+      properties:
+        shipmentId:
+          type: number
+        trunkrsNr:
+          type: string
+        orderReference:
+          type: string
+        tourId:
+          type: number
+        currentOwner:
+          type: object
+          required:
+            - type
+            - name
+          properties:
+            type:
+              type: string
+            name:
+              type: string
+            address:
+              type: string
+            postCode:
+              type: string
+            city:
+              type: string
+            country:
+              type: string
+        stateObj:
+          type: object
+          required:
+            - id
+            - label
+            - name
+            - status
+          properties:
+            id:
+              type: number
+            label:
+              type: string
+            name:
+              type: string
+            status:
+              type: string
+            reasonCode:
+              type: string
+        timestamp:
+          type: string
+        event:
+          type: string
+      required:
+        - shipmentId
+        - trunkrsNr
+        - orderReference
+        - currentOwner
+        - stateObj
+        - timestamp
+        - event
+      x-tags:
+        - webhooks
   securitySchemes:
     ClientId:
       name: x-api-clientid
