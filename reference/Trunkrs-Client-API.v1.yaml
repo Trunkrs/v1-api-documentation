@@ -735,7 +735,7 @@ components:
         - status
         - statusCode
     Webook-payload:
-      title: Webook-payload
+      title: Webook payload
       type: object
       description: |-
         The contents of a webhook.
