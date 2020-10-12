@@ -6,7 +6,10 @@ info:
     name: Trunkrs BV
     url: 'https://trunkrs.nl'
     email: tech.support@trunkrs.nl
-  description: API allowing Trunkrs Clients to create and cancel shipments as well as get information on the status of shipments.
+  description: |-
+    *THIS API HAS BEEN REPLACED BY V2*
+
+    API allowing Trunkrs Clients to create and cancel shipments as well as get information on the status of shipments.
   termsOfService: 'https://static1.squarespace.com/static/5cb44d76523958d6ab569d39/t/5cb72fed4785d35a3af1d89e/1555509229937/Algemene-voorwaarden-van-de-Fenex.pdf'
 servers:
   - url: 'https://staging-api.trunkrs.nl/api/v1'
