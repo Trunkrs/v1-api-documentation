@@ -1,3 +1,7 @@
+# DEPRECATED 
+
+This version of the API has been replaced by V2. Please do **not** use the v1 version for new integrations.
+
 # Intro
 
 The Trunkrs API is designed for Trunkrs clients to create shipments and retrieve statusses. If you are not yet a Trunkrs customer and would like to become one, please visit our website https://www.trunkrs.nl
